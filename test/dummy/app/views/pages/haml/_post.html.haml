@@ -1,0 +1,6 @@
+%div.card
+  %h3= post.title
+  %p= post.body
+  - n = rand(100_000..500_000)
+  - Post.connection.select_value("WITH RECURSIVE r(i) AS (VALUES(0) UNION ALL SELECT i+1 FROM r WHERE i < #{n}) SELECT count(*) FROM r")
+  %small= "#{Post.where('id <= ?', post.id).count} of #{Post.count}"

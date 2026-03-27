@@ -1,0 +1,7 @@
+= turbo_stream.append "stream-target" do
+  %div.card{style: "border-color: #10b981"}
+    %h3 Streamed at #{Time.now.strftime("%H:%M:%S")}
+    - if defined?(Post) && Post.table_exists?
+      %p= "Random post: #{Post.order('RANDOM()').first.title}"
+    - else
+      %p This content was added via Turbo Stream

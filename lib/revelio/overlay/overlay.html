@@ -1,0 +1,83 @@
+<div class="revelio-floating-menu">
+  <button class="revelio-menu-trigger" id="revelioMenuTrigger">
+    <span class="revelio-trigger-icon">&#x2B21;</span>
+    <span class="revelio-trigger-text">Revelio</span>
+  </button>
+  <div class="revelio-panel" id="revelioMenuPanel">
+    <div class="revelio-panel-header">Revelio</div>
+    <div class="revelio-panel-body">
+      <details class="revelio-section" open>
+        <summary>Outlines</summary>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioToggleViewOutlines" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text revelio-outline-preview revelio-outline-view">Views</span>
+          </label>
+        </div>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioTogglePartialOutlines" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text revelio-outline-preview revelio-outline-partial">Partials</span>
+          </label>
+        </div>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioToggleComponentOutlines" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text revelio-outline-preview revelio-outline-component">Components</span>
+          </label>
+        </div>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioToggleTooltips" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text">Hover Tooltips</span>
+          </label>
+        </div>
+      </details>
+      <details class="revelio-section" open>
+        <summary>Linters</summary>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioToggleStimulusLinter" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text revelio-outline-preview revelio-outline-stimulus">Stimulus</span>
+          </label>
+          <div id="revelioStimulusResults" class="revelio-stimulus-results"></div>
+        </div>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioToggleTurboLinter" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text revelio-outline-preview revelio-outline-stimulus">Turbo</span>
+          </label>
+          <div id="revelioTurboResults" class="revelio-stimulus-results"></div>
+        </div>
+        <div class="revelio-toggle-item">
+          <label class="revelio-toggle-label">
+            <input type="checkbox" id="revelioToggleComponentLinter" class="revelio-toggle-input">
+            <span class="revelio-toggle-switch"></span>
+            <span class="revelio-toggle-text revelio-outline-preview revelio-outline-component">Component Inspector</span>
+          </label>
+          <div id="revelioComponentResults" class="revelio-stimulus-results"></div>
+        </div>
+      </details>
+      <div id="revelioMetricsSection" class="revelio-metrics-section"></div>
+      <div id="revelioTurboStreamLog" class="revelio-metrics-section"></div>
+      <details class="revelio-section" open>
+        <summary>Settings</summary>
+        <div class="revelio-editor-section">
+          <label class="revelio-editor-label">
+            <span class="revelio-editor-text">Editor</span>
+            <select id="revelioEditorSelect" class="revelio-editor-select">__REVELIO_EDITOR_OPTIONS__</select>
+          </label>
+        </div>
+        <div class="revelio-disable-section">
+          <button id="revelioDisableAll" class="revelio-disable-btn">Disable All</button>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>

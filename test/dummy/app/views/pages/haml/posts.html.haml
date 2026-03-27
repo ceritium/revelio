@@ -1,0 +1,14 @@
+%h1 Posts (#{posts.count} total)
+
+%p This page generates SQL queries. Check the metrics panel and partial outlines.
+
+- posts.each do |post|
+  = render partial: "pages/haml/post", locals: { post: post }
+
+%section
+  %h2 Extra queries
+  %p First post: #{Post.first.title}
+  %p Last post: #{Post.last.title}
+  %p Published today: #{Post.where("created_at >= ?", Date.today).count}
+  %p Average ID: #{Post.average(:id).to_f.round(1)}
+  %p Titles: #{Post.order(:title).pluck(:title).join(", ")}

@@ -1,0 +1,51 @@
+%h1 Stimulus Examples
+
+%p Enable the <strong>Stimulus Linter</strong> in the DevTools panel to see errors highlighted in red.
+
+%section
+  %h2 Hello Controller (valid)
+  %div{data: {controller: "hello"}}
+    %input{type: "text", data: {hello_target: "name"}, placeholder: "Enter your name"}
+    %button{data: {action: "click->hello#greet"}} Greet
+    %span{data: {hello_target: "output"}}
+
+%section
+  %h2 Counter Controller (valid)
+  %div{data: {controller: "counter"}}
+    %button{data: {action: "click->counter#decrement"}} -
+    %span{data: {counter_target: "count"}} 0
+    %button{data: {action: "click->counter#increment"}} +
+
+%section
+  %h2 Toggle Controller (valid)
+  %div{data: {controller: "toggle"}}
+    %button{data: {action: "click->toggle#toggle"}} Toggle content
+    %div{data: {toggle_target: "content"}}
+      %p This content can be toggled.
+
+%hr
+
+%h2 Errors below (should be caught by the linter)
+
+%section.error-example
+  %h2 Unknown controller
+  %div{data: {controller: "nonexistent"}}
+    %p This controller does not exist.
+
+%section.error-example
+  %h2 Unknown target
+  %div{data: {controller: "hello"}}
+    %input{data: {hello_target: "typo_name"}, placeholder: "This target doesn't exist"}
+
+%section.error-example
+  %h2 Unknown action method
+  %div{data: {controller: "counter"}}
+    %button{data: {action: "click->counter#reset"}} Reset (method doesn't exist)
+
+%section.error-example
+  %h2 Multiple errors
+  %div{data: {controller: "missing-ctrl"}}
+    %button{data: {action: "click->missing-ctrl#doSomething"}} Broken button
+  %div{data: {controller: "toggle"}}
+    %div{data: {toggle_target: "panel"}} Wrong target name
+    %button{data: {action: "click->toggle#show"}} Wrong method

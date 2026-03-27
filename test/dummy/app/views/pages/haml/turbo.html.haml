@@ -1,0 +1,11 @@
+%h1 Turbo Examples
+
+%section
+  %h2 Turbo Frame (lazy loaded)
+  = turbo_frame_tag "lazy-posts", src: "/haml/turbo_frame", loading: :lazy do
+    %p Loading posts...
+
+%section
+  %h2 Turbo Stream (click to append)
+  %button{data: {action: "click->counter#increment"}, id: "stream-btn", onclick: "fetch('/haml/turbo_stream').then(r => r.text()).then(html => Turbo.renderStreamMessage(html))"} Add a post via Stream
+  #stream-target

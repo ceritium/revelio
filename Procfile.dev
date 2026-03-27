@@ -1,0 +1,2 @@
+web: bundle exec rackup test/dummy/config.ru -p 3000
+watch: bundle exec rake build:watch

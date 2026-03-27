@@ -1,0 +1,32 @@
+%h1 Turbo Linter Examples
+
+%p Enable the <strong>Turbo Linter</strong> in the DevTools panel to see errors highlighted in red.
+
+%section
+  %h2 Valid Turbo Frames
+  %turbo-frame#valid-frame
+    %p This frame has a proper id.
+  %turbo-frame#another-frame
+    %p Another valid frame.
+
+%section
+  %h2 Valid data-turbo-frame reference
+  %a{href: "/haml", data: {turbo_frame: "valid-frame"}} Load into valid-frame
+
+%hr
+
+%h2 Errors below (should be caught by the linter)
+
+%section.error-example
+  %h2 Frame without id
+  %turbo-frame
+    %p This turbo-frame is missing the required id attribute.
+
+%section.error-example
+  %h2 Reference to non-existent frame
+  %a{href: "/haml", data: {turbo_frame: "does-not-exist"}} Load into missing frame
+
+%section.error-example
+  %h2 Another dangling reference
+  %form{action: "/haml", data: {turbo_frame: "ghost-frame"}}
+    %button Submit to non-existent frame

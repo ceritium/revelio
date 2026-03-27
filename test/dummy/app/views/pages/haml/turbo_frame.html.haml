@@ -1,0 +1,7 @@
+= turbo_frame_tag "lazy-posts" do
+  - if defined?(Post) && Post.table_exists?
+    - Post.limit(3).each do |post|
+      = render partial: "pages/haml/post", locals: { post: post }
+  - else
+    = render partial: "pages/haml/card"
+    = render partial: "pages/haml/card"
