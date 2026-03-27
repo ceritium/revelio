@@ -22,7 +22,12 @@ module Temple
         preamble = %{<!-- temple-devtools-begin file="#{relative}" type="#{type}" short="#{short}" -->}
         postamble = %{<!-- temple-devtools-end file="#{relative}" -->}
 
-        "@output_buffer.safe_append='#{preamble}';\n#{compiled}\n@output_buffer.safe_append='#{postamble}';"
+        # Insert preamble AFTER buffer initialization, postamble at the end
+        result = compiled.sub(
+          "@output_buffer = output_buffer || ActionView::OutputBuffer.new;",
+          "@output_buffer = output_buffer || ActionView::OutputBuffer.new; @output_buffer.safe_append='#{preamble}';"
+        )
+        "#{result}\n@output_buffer.safe_append='#{postamble}';\n@output_buffer"
       end
     end
   end

@@ -10,10 +10,6 @@ module Temple
         end
       end
 
-      initializer "temple_devtools.install", after: :load_config_initializers do
-        Temple::Devtools.install!
-      end
-
       initializer "temple_devtools.middleware" do |app|
         if Temple::Devtools.config.debug_mode && Temple::Devtools.config.inject_overlay
           app.middleware.insert_before ActionDispatch::ShowExceptions, Temple::Devtools::Middleware

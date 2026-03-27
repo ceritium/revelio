@@ -143,3 +143,51 @@ class ErbIntegrationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, '<script id="temple-devtools">'
   end
 end
+
+class MixedEngineIntegrationTest < ActionDispatch::IntegrationTest
+  setup do
+    Temple::Devtools.config.debug_mode = true
+    Temple::Devtools.install!
+  end
+
+  test "haml view renders erb and slim partials" do
+    get "/haml/mixed"
+    assert_response :success
+    body = response.body
+    # View is HAML
+    assert_includes body, 'data-devtools-type="view"'
+    assert_includes body, "mixed.html.haml"
+    # ERB partial markers
+    assert_includes body, '_card.html.erb'
+    # Slim partial markers
+    assert_includes body, '_card.html.slim'
+    # HAML partial with data attrs
+    assert_includes body, 'data-devtools-type="partial"'
+  end
+
+  test "slim view renders erb and haml partials" do
+    get "/slim/mixed"
+    assert_response :success
+    body = response.body
+    assert_includes body, "mixed.html.slim"
+    assert_includes body, '_card.html.erb'
+    assert_includes body, '_card.html.haml'
+  end
+
+  test "erb view renders haml and slim partials" do
+    get "/erb/mixed"
+    assert_response :success
+    body = response.body
+    assert_includes body, "mixed.html.erb"
+    assert_includes body, '_card.html.haml'
+    assert_includes body, '_card.html.slim'
+  end
+
+  test "all three engines coexist with correct type detection" do
+    get "/haml/mixed"
+    body = response.body
+    # Should have view, partial markers from different engines
+    assert_includes body, 'type="view"'
+    assert_includes body, 'type="partial"'
+  end
+end

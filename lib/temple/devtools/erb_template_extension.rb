@@ -23,7 +23,8 @@ module Temple
         preamble = %{<!-- temple-devtools-begin file="#{relative}" type="#{type}" short="#{short}" -->}
         postamble = %{<!-- temple-devtools-end file="#{relative}" -->}
 
-        "@output_buffer.safe_append='#{preamble}';\n#{compiled};\n@output_buffer.safe_append='#{postamble}';\n@output_buffer"
+        # ERB's output buffer is already initialized by ActionView before the template runs
+        "@output_buffer.safe_append='#{preamble}';#{compiled}\n@output_buffer.safe_append='#{postamble}';\n@output_buffer"
       end
     end
   end

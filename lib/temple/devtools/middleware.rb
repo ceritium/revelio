@@ -8,6 +8,7 @@ module Temple
       end
 
       def call(env)
+        ensure_installed!
         status, headers, response = @app.call(env)
         return [status, headers, response] unless injectable?(status, headers)
 
@@ -24,6 +25,13 @@ module Temple
       end
 
       private
+
+      def ensure_installed!
+        return if @extensions_installed
+
+        Temple::Devtools.install!
+        @extensions_installed = true
+      end
 
       def injectable?(status, headers)
         status == 200 &&
