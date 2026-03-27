@@ -134,6 +134,14 @@ rake test             # integration tests (template markers, middleware)
 rake test_system      # browser tests (Capybara + Cuprite)
 ```
 
+### Releasing
+
+```bash
+bin/release
+```
+
+Runs tests, builds `overlay.js`, packages the gem, tags the version, pushes to GitHub, and publishes to RubyGems. Bump the version in `lib/revelio/version.rb` and commit before running.
+
 ### Screenshots
 
 ```bash

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -e
+
+VERSION=$(ruby -r ./lib/revelio/version -e "puts Revelio::VERSION")
+GEM_FILE="revelio-${VERSION}.gem"
+
+echo "==> Releasing revelio v${VERSION}"
+
+# Ensure tag doesn't already exist
+if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+  echo "ERROR: tag v${VERSION} already exists. Bump version in lib/revelio/version.rb first."
+  exit 1
+fi
+
+# Ensure version isn't already on RubyGems
+if gem info revelio --remote --exact 2>/dev/null | grep -q "${VERSION}"; then
+  echo "ERROR: revelio ${VERSION} is already published on RubyGems."
+  exit 1
+fi
+
+# Ensure working tree is clean
+if [ -n "$(git status --porcelain)" ]; then
+  echo "ERROR: working tree is not clean. Commit or stash changes first."
+  exit 1
+fi
+
+# Ensure tests pass
+echo "==> Running tests..."
+bundle exec rake test
+bundle exec rake test_system
+
+# Build overlay
+echo "==> Building overlay.js..."
+bundle exec rake build:overlay
+
+# Build gem
+echo "==> Building gem..."
+gem build revelio.gemspec
+
+# Tag and push
+echo "==> Tagging v${VERSION}..."
+git tag -a "v${VERSION}" -m "Release v${VERSION}"
+git push origin master --tags
+
+# Publish
+echo "==> Publishing to RubyGems..."
+gem push "$GEM_FILE"
+
+# Cleanup
+rm -f "$GEM_FILE"
+
+echo "==> Done! revelio v${VERSION} published."
