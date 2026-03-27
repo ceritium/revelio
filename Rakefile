@@ -61,4 +61,9 @@ namespace :build do
   end
 end
 
+desc "Capture README screenshots of the dummy app"
+task :screenshots do
+  ruby "test/screenshots.rb"
+end
+
 task default: :test
