@@ -45,6 +45,14 @@ module Temple
 
       def resolve_id(payload)
         identifier = payload[:identifier] || payload[:name] || ""
+
+        # ViewComponent reports the .rb file as identifier.
+        # Match it to the actual template file for boundary correlation.
+        if identifier.end_with?(".rb")
+          template = Dir.glob("#{identifier.chomp('.rb')}.html.*").first
+          identifier = template if template
+        end
+
         resolve_template_info(identifier).first
       end
     end

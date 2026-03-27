@@ -3,10 +3,15 @@
 module Temple
   module Devtools
     class Railtie < Rails::Railtie
-      initializer "temple_devtools.configure", before: :load_config_initializers do
+      initializer "temple_devtools.configure", before: :load_config_initializers do |app|
         Temple::Devtools.configure do |config|
           config.debug_mode = Rails.env.development?
           config.project_root = Rails.root.to_s
+        end
+
+        # Enable ViewComponent instrumentation so we can capture render times
+        if defined?(ViewComponent) && Rails.env.development?
+          app.config.view_component.instrumentation_enabled = true
         end
       end
 
