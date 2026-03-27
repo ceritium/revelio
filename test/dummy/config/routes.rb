@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get "/haml/turbo" => "pages#haml_turbo"
   get "/haml/turbo_frame" => "pages#haml_turbo_frame"
   get "/haml/turbo_stream" => "pages#haml_turbo_stream"
+  get "/haml/turbo_linter" => "pages#haml_turbo_linter"
 
   # Slim
   get "/slim" => "pages#slim_index"

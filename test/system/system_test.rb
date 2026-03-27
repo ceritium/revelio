@@ -231,6 +231,46 @@ class StimulusLinterSystemTest < SystemTest
   end
 end
 
+class TurboLinterSystemTest < SystemTest
+  def test_linter_detects_issues
+    visit "/haml/turbo_linter"
+    wait_for_devtools
+    enable_feature "Turbo Linter"
+    sleep 0.5
+
+    issues = page.evaluate_script("document.querySelectorAll('#revelioTurboResults .revelio-lint-item').length")
+    assert issues > 0, "Turbo linter should detect issues"
+  end
+
+  def test_linter_shows_issue_types
+    visit "/haml/turbo_linter"
+    wait_for_devtools
+    enable_feature "Turbo Linter"
+    sleep 0.5
+
+    assert_selector ".revelio-lint-badge-frame"
+    assert_selector ".revelio-lint-badge-reference"
+  end
+
+  def test_linter_detects_frame_without_id
+    visit "/haml/turbo_linter"
+    wait_for_devtools
+    enable_feature "Turbo Linter"
+    sleep 0.5
+
+    assert_text 'missing required "id" attribute'
+  end
+
+  def test_linter_detects_dangling_reference
+    visit "/haml/turbo_linter"
+    wait_for_devtools
+    enable_feature "Turbo Linter"
+    sleep 0.5
+
+    assert_text "points to non-existent frame"
+  end
+end
+
 class TooltipSystemTest < SystemTest
   def test_tooltip_appears_on_hover
     visit "/haml"
