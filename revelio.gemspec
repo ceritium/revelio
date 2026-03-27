@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name = "revelio"
   spec.version = Revelio::VERSION
   spec.authors = ["Jose Galisteo"]
-  spec.email = ["jose@josegalisteo.com"]
+  spec.email = ["jose.galisteo.ruiz@gmail.com", "ceritium@gmail.com"]
 
   spec.summary = "Reveal what's behind your Rails views"
   spec.description = "Debug overlays, template boundaries, and source location tracking " \
