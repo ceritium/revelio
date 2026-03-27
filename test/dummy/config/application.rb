@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups) if defined?(Bundler)
 
 class DummyApp < Rails::Application
   config.eager_load = false
-  config.secret_key_base = "temple-devtools-dummy-secret"
+  config.secret_key_base = "revelio-dummy-secret"
   config.hosts.clear
   config.root = File.expand_path("..", __dir__)
 

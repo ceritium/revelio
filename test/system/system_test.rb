@@ -20,13 +20,13 @@ unless defined?(Slim::RailsTemplate)
   )
 end
 
-require "temple/devtools"
+require "revelio"
 require "capybara/minitest"
 require "capybara/cuprite"
 
 require_relative "../dummy/config/application"
 
-DummyApp.config.middleware.use Temple::Devtools::Middleware
+DummyApp.config.middleware.use Revelio::Middleware
 DummyApp.config.view_component.preview_paths = []
 DummyApp.initialize! unless DummyApp.initialized?
 
@@ -46,11 +46,11 @@ end
 
 DUMMY_ROOT = File.expand_path("../dummy", __dir__)
 
-Temple::Devtools.configure do |c|
+Revelio.configure do |c|
   c.debug_mode = true
   c.project_root = DUMMY_ROOT
 end
-Temple::Devtools.install!
+Revelio.install!
 
 require_relative "../dummy/app/components/badge_component"
 require_relative "../dummy/app/controllers/pages_controller"
@@ -80,21 +80,21 @@ class SystemTest < Minitest::Test
   end
 
   def wait_for_devtools
-    assert_selector "#templeMenuTrigger", wait: 5
+    assert_selector "#revelioMenuTrigger", wait: 5
   end
 
   def enable_feature(label)
-    find("#templeMenuTrigger").click unless page.has_css?(".temple-devtools-panel.open")
+    find("#revelioMenuTrigger").click unless page.has_css?(".revelio-panel.open")
     find("label", text: label).click
     sleep 0.3
   end
 
   def overlay_count
-    page.evaluate_script("document.querySelectorAll('.temple-devtools-boundary-overlay').length")
+    page.evaluate_script("document.querySelectorAll('.revelio-boundary-overlay').length")
   end
 
   def devtools_comments_count
-    page.evaluate_script("(function(){ var w=document.createTreeWalker(document,NodeFilter.SHOW_COMMENT); var n=0; while(w.nextNode()){if(w.currentNode.textContent.includes('temple-devtools-begin'))n++;} return n; })()")
+    page.evaluate_script("(function(){ var w=document.createTreeWalker(document,NodeFilter.SHOW_COMMENT); var n=0; while(w.nextNode()){if(w.currentNode.textContent.includes('revelio-begin'))n++;} return n; })()")
   end
 end
 
@@ -102,14 +102,14 @@ class WidgetSystemTest < SystemTest
   def test_widget_renders_on_page_load
     visit "/haml"
     wait_for_devtools
-    assert_selector ".temple-devtools-floating-menu"
+    assert_selector ".revelio-floating-menu"
   end
 
   def test_panel_opens_on_click
     visit "/haml"
     wait_for_devtools
-    find("#templeMenuTrigger").click
-    assert_selector ".temple-devtools-panel.open"
+    find("#revelioMenuTrigger").click
+    assert_selector ".revelio-panel.open"
     assert_text "Template Debug Tools"
   end
 
@@ -130,7 +130,7 @@ class WidgetSystemTest < SystemTest
   def test_metrics_section_shows_data
     visit "/haml"
     wait_for_devtools
-    find("#templeMenuTrigger").click
+    find("#revelioMenuTrigger").click
     assert_text "Duration"
     assert_text "Queries"
     assert_text "GC alloc"
@@ -149,11 +149,11 @@ class TurboSystemTest < SystemTest
     sleep 1
 
     # Debug: check state after navigation
-    state = page.evaluate_script("JSON.parse(localStorage.getItem('temple-devtools-settings') || '{}')")
+    state = page.evaluate_script("JSON.parse(localStorage.getItem('revelio-settings') || '{}')")
     boundaries = devtools_comments_count
     count = overlay_count
 
-    all_comments = page.evaluate_script("(function(){ var w=document.createTreeWalker(document,NodeFilter.SHOW_COMMENT); var r=[]; while(w.nextNode()){var t=w.currentNode.textContent.trim(); if(t.includes('temple-devtools'))r.push(t.substring(0,80));} return r; })()")
+    all_comments = page.evaluate_script("(function(){ var w=document.createTreeWalker(document,NodeFilter.SHOW_COMMENT); var r=[]; while(w.nextNode()){var t=w.currentNode.textContent.trim(); if(t.includes('revelio'))r.push(t.substring(0,80));} return r; })()")
     assert count > 0, "Outlines should rebuild. boundaries=#{boundaries}, overlays=#{count}, comments=#{all_comments.inspect}"
   end
 
@@ -166,7 +166,7 @@ class TurboSystemTest < SystemTest
     assert_selector "turbo-frame#lazy-posts .card", wait: 5
     sleep 0.5
 
-    frame_comments = page.evaluate_script("(function(){ var f=document.querySelector('turbo-frame#lazy-posts'); if(!f)return 0; var w=document.createTreeWalker(f,NodeFilter.SHOW_COMMENT); var n=0; while(w.nextNode()){if(w.currentNode.textContent.includes('temple-devtools-begin'))n++;} return n; })()")
+    frame_comments = page.evaluate_script("(function(){ var f=document.querySelector('turbo-frame#lazy-posts'); if(!f)return 0; var w=document.createTreeWalker(f,NodeFilter.SHOW_COMMENT); var n=0; while(w.nextNode()){if(w.currentNode.textContent.includes('revelio-begin'))n++;} return n; })()")
     assert frame_comments > 0, "Turbo frame should contain devtools comment markers"
 
     assert overlay_count > 0, "Overlays should include turbo frame content"
@@ -191,19 +191,19 @@ class TurboSystemTest < SystemTest
   def test_metrics_update_after_turbo_drive_navigation
     visit "/haml"
     wait_for_devtools
-    find("#templeMenuTrigger").click
+    find("#revelioMenuTrigger").click
 
     # Get initial duration
-    initial_metrics = page.evaluate_script("document.getElementById('temple-devtools-metrics')?.textContent")
+    initial_metrics = page.evaluate_script("document.getElementById('revelio-metrics')?.textContent")
     assert initial_metrics, "Should have metrics JSON"
 
     click_link "Slim"
     wait_for_devtools
     sleep 0.3
-    find("#templeMenuTrigger").click
+    find("#revelioMenuTrigger").click
 
     # Metrics should have been re-rendered with new data
-    new_metrics = page.evaluate_script("document.getElementById('temple-devtools-metrics')?.textContent")
+    new_metrics = page.evaluate_script("document.getElementById('revelio-metrics')?.textContent")
     assert new_metrics, "Should have metrics JSON after navigation"
     # The metrics JSON should be different (different template, different timing)
     assert_text "Duration"
@@ -217,7 +217,7 @@ class StimulusLinterSystemTest < SystemTest
     enable_feature "Stimulus Linter"
     sleep 0.5
 
-    issues = page.evaluate_script("document.querySelectorAll('.temple-devtools-lint-item').length")
+    issues = page.evaluate_script("document.querySelectorAll('.revelio-lint-item').length")
     assert issues > 0, "Stimulus linter should detect issues"
   end
 
@@ -227,7 +227,7 @@ class StimulusLinterSystemTest < SystemTest
     enable_feature "Stimulus Linter"
     sleep 0.5
 
-    assert_selector ".temple-devtools-lint-badge-controller"
+    assert_selector ".revelio-lint-badge-controller"
   end
 end
 
@@ -238,7 +238,7 @@ class TooltipSystemTest < SystemTest
     enable_feature "Hover Tooltips"
 
     find("h1").hover
-    assert_selector ".temple-devtools-tooltip.visible", wait: 3
+    assert_selector ".revelio-tooltip.visible", wait: 3
     assert_text "index.html.haml"
   end
 end

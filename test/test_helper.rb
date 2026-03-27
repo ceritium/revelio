@@ -2,5 +2,5 @@
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 
-require "temple/devtools"
+require "revelio"
 require "minitest/autorun"

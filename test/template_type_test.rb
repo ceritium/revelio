@@ -3,7 +3,7 @@
 require "test_helper"
 
 class TemplateTypeTest < Minitest::Test
-  include Temple::Devtools::TemplateType
+  include Revelio::TemplateType
 
   def test_view
     assert_equal "view", template_type("app/views/users/index.html.haml")

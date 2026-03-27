@@ -21,22 +21,22 @@ unless defined?(Slim::RailsTemplate)
   )
 end
 
-require "temple/devtools"
+require "revelio"
 require "minitest/autorun"
 
 require_relative "dummy/config/application"
 
-DummyApp.config.middleware.use Temple::Devtools::Middleware
+DummyApp.config.middleware.use Revelio::Middleware
 DummyApp.config.view_component.preview_paths = []
 DummyApp.initialize! unless DummyApp.initialized?
 
 DUMMY_ROOT = File.expand_path("dummy", __dir__)
 
-Temple::Devtools.configure do |c|
+Revelio.configure do |c|
   c.debug_mode = true
   c.project_root = DUMMY_ROOT
 end
-Temple::Devtools.install!
+Revelio.install!
 
 require_relative "dummy/app/components/badge_component"
 require_relative "dummy/app/controllers/pages_controller"
@@ -49,87 +49,87 @@ require_relative "dummy/config/routes"
 
 class HamlIntegrationTest < ActionDispatch::IntegrationTest
   setup do
-    Temple::Devtools.config.debug_mode = true
-    Temple::Devtools.install!
+    Revelio.config.debug_mode = true
+    Revelio.install!
   end
 
   test "renders with data attributes" do
     get "/haml"
     assert_response :success
-    assert_includes response.body, 'data-devtools-file='
-    assert_includes response.body, 'data-devtools-line="1"'
-    assert_includes response.body, 'data-devtools-type="view"'
+    assert_includes response.body, 'data-revelio-file='
+    assert_includes response.body, 'data-revelio-line="1"'
+    assert_includes response.body, 'data-revelio-type="view"'
   end
 
   test "injects comment markers" do
     get "/haml"
-    assert_includes response.body, "temple-devtools-begin"
-    assert_includes response.body, "temple-devtools-end"
+    assert_includes response.body, "revelio-begin"
+    assert_includes response.body, "revelio-end"
     assert_includes response.body, 'type="view"'
   end
 
   test "injects devtools script" do
     get "/haml"
-    assert_includes response.body, '<script id="temple-devtools">'
+    assert_includes response.body, '<script id="revelio">'
   end
 
   test "partial detected" do
     get "/haml/partial"
     assert_includes response.body, 'type="partial"'
-    assert_includes response.body, 'data-devtools-type="partial"'
+    assert_includes response.body, 'data-revelio-type="partial"'
   end
 
   test "component detected" do
     get "/haml/component"
     assert_includes response.body, 'type="component"'
-    assert_includes response.body, 'data-devtools-type="component"'
+    assert_includes response.body, 'data-revelio-type="component"'
   end
 end
 
 class SlimIntegrationTest < ActionDispatch::IntegrationTest
   setup do
-    Temple::Devtools.config.debug_mode = true
-    Temple::Devtools.install!
+    Revelio.config.debug_mode = true
+    Revelio.install!
   end
 
   test "renders with data attributes" do
     get "/slim"
     assert_response :success
-    assert_includes response.body, 'data-devtools-file='
-    assert_includes response.body, 'data-devtools-type="view"'
+    assert_includes response.body, 'data-revelio-file='
+    assert_includes response.body, 'data-revelio-type="view"'
   end
 
   test "injects comment markers" do
     get "/slim"
-    assert_includes response.body, "temple-devtools-begin"
-    assert_includes response.body, "temple-devtools-end"
+    assert_includes response.body, "revelio-begin"
+    assert_includes response.body, "revelio-end"
   end
 
   test "partial detected" do
     get "/slim/partial"
     assert_includes response.body, 'type="partial"'
-    assert_includes response.body, 'data-devtools-type="partial"'
+    assert_includes response.body, 'data-revelio-type="partial"'
   end
 end
 
 class ErbIntegrationTest < ActionDispatch::IntegrationTest
   setup do
-    Temple::Devtools.config.debug_mode = true
-    Temple::Devtools.install!
+    Revelio.config.debug_mode = true
+    Revelio.install!
   end
 
   test "injects comment markers" do
     get "/erb"
     assert_response :success
-    assert_includes response.body, "temple-devtools-begin"
-    assert_includes response.body, "temple-devtools-end"
+    assert_includes response.body, "revelio-begin"
+    assert_includes response.body, "revelio-end"
     assert_includes response.body, 'type="view"'
   end
 
   test "no data attributes on elements (ERB is not HTML-aware)" do
     get "/erb"
-    html_before_script = response.body.split('<script id="temple-devtools">').first
-    refute_includes html_before_script, "data-devtools-file"
+    html_before_script = response.body.split('<script id="revelio">').first
+    refute_includes html_before_script, "data-revelio-file"
   end
 
   test "partial comment markers" do
@@ -140,14 +140,14 @@ class ErbIntegrationTest < ActionDispatch::IntegrationTest
 
   test "injects devtools script" do
     get "/erb"
-    assert_includes response.body, '<script id="temple-devtools">'
+    assert_includes response.body, '<script id="revelio">'
   end
 end
 
 class MixedEngineIntegrationTest < ActionDispatch::IntegrationTest
   setup do
-    Temple::Devtools.config.debug_mode = true
-    Temple::Devtools.install!
+    Revelio.config.debug_mode = true
+    Revelio.install!
   end
 
   test "haml view renders erb and slim partials" do
@@ -155,14 +155,14 @@ class MixedEngineIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
     body = response.body
     # View is HAML
-    assert_includes body, 'data-devtools-type="view"'
+    assert_includes body, 'data-revelio-type="view"'
     assert_includes body, "mixed.html.haml"
     # ERB partial markers
     assert_includes body, '_card.html.erb'
     # Slim partial markers
     assert_includes body, '_card.html.slim'
     # HAML partial with data attrs
-    assert_includes body, 'data-devtools-type="partial"'
+    assert_includes body, 'data-revelio-type="partial"'
   end
 
   test "slim view renders erb and haml partials" do
@@ -193,16 +193,16 @@ end
 
 class TurboIntegrationTest < ActionDispatch::IntegrationTest
   setup do
-    Temple::Devtools.config.debug_mode = true
-    Temple::Devtools.install!
+    Revelio.config.debug_mode = true
+    Revelio.install!
   end
 
   test "turbo page has devtools markers and data attributes" do
     get "/haml/turbo"
     assert_response :success
-    assert_includes response.body, "temple-devtools-begin"
+    assert_includes response.body, "revelio-begin"
     assert_includes response.body, 'type="view"'
-    assert_includes response.body, 'data-devtools-type="view"'
+    assert_includes response.body, 'data-revelio-type="view"'
     assert_includes response.body, "turbo.html.haml"
   end
 
@@ -210,7 +210,7 @@ class TurboIntegrationTest < ActionDispatch::IntegrationTest
     get "/haml/turbo_frame"
     assert_response :success
     body = response.body
-    assert_includes body, "temple-devtools-begin"
+    assert_includes body, "revelio-begin"
     assert_includes body, 'type="view"'
     assert_includes body, 'type="partial"'
     assert_includes body, ".html.haml"
@@ -219,8 +219,8 @@ class TurboIntegrationTest < ActionDispatch::IntegrationTest
   test "turbo frame response has data attributes on elements" do
     get "/haml/turbo_frame"
     body = response.body
-    assert_includes body, 'data-devtools-file='
-    assert_includes body, 'data-devtools-type="partial"'
+    assert_includes body, 'data-revelio-file='
+    assert_includes body, 'data-revelio-type="partial"'
   end
 
   test "turbo stream response has devtools markers" do
@@ -229,22 +229,22 @@ class TurboIntegrationTest < ActionDispatch::IntegrationTest
     body = response.body
     # Turbo stream is text/vnd.turbo-stream.html, not text/html
     # So the middleware does NOT inject the script (correct behavior)
-    refute_includes body, '<script id="temple-devtools">'
+    refute_includes body, '<script id="revelio">'
     # But the template markers ARE in the compiled output
-    assert_includes body, "temple-devtools-begin"
+    assert_includes body, "revelio-begin"
     assert_includes body, "turbo_stream.html.haml"
   end
 
   test "turbo stream has data attributes on elements" do
     get "/haml/turbo_stream"
     body = response.body
-    assert_includes body, 'data-devtools-file='
-    assert_includes body, 'data-devtools-type="view"'
+    assert_includes body, 'data-revelio-file='
+    assert_includes body, 'data-revelio-type="view"'
   end
 
   test "turbo frame does not inject middleware script (no </body>)" do
     get "/haml/turbo_frame"
     # Frame responses without layout have no </body>, so no script injection
-    refute_includes response.body, '<script id="temple-devtools">'
+    refute_includes response.body, '<script id="revelio">'
   end
 end
