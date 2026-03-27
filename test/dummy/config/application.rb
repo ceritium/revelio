@@ -3,6 +3,7 @@
 require "rails"
 require "action_controller/railtie"
 require "action_view/railtie"
+require "active_record/railtie"
 
 Bundler.require(*Rails.groups) if defined?(Bundler)
 
@@ -14,4 +15,5 @@ class DummyApp < Rails::Application
 
   config.public_file_server.enabled = true
   config.autoload_paths << File.expand_path("../app/components", __dir__)
+
 end

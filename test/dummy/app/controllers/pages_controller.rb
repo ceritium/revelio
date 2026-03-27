@@ -8,6 +8,7 @@ class PagesController < ActionController::Base
   def haml_component   = render("pages/haml/with_component")
   def haml_mixed       = render("pages/haml/mixed")
   def haml_stimulus    = render("pages/haml/stimulus")
+  def haml_posts       = render("pages/haml/posts", locals: { posts: Post.all })
 
   def slim_index       = render("pages/slim/index")
   def slim_partial     = render("pages/slim/with_partial")
