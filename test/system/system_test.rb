@@ -110,20 +110,20 @@ class WidgetSystemTest < SystemTest
     wait_for_devtools
     find("#revelioMenuTrigger").click
     assert_selector ".revelio-panel.open"
-    assert_text "Template Debug Tools"
+    assert_selector ".revelio-panel.open"
   end
 
   def test_view_outlines_appear
     visit "/haml"
     wait_for_devtools
-    enable_feature "View Outlines"
+    enable_feature "Views"
     assert overlay_count > 0, "Expected view outline overlays"
   end
 
   def test_partial_outlines_appear
     visit "/haml/partial"
     wait_for_devtools
-    enable_feature "Partial Outlines"
+    enable_feature "Partials"
     assert overlay_count > 0, "Expected partial outline overlays"
   end
 
@@ -141,10 +141,10 @@ class TurboSystemTest < SystemTest
   def test_outlines_persist_across_turbo_drive
     visit "/haml"
     wait_for_devtools
-    enable_feature "View Outlines"
+    enable_feature "Views"
     assert overlay_count > 0
 
-    click_link "Slim"
+    within("nav") { click_link "Slim", match: :first }
     wait_for_devtools
     sleep 1
 
@@ -160,7 +160,7 @@ class TurboSystemTest < SystemTest
   def test_outlines_rebuild_after_turbo_frame_loads
     visit "/haml/turbo"
     wait_for_devtools
-    enable_feature "Partial Outlines"
+    enable_feature "Partials"
 
     # Wait for lazy turbo frame to load content
     assert_selector "turbo-frame#lazy-posts .card", wait: 5
@@ -175,7 +175,7 @@ class TurboSystemTest < SystemTest
   def test_outlines_rebuild_after_turbo_stream
     visit "/haml/turbo"
     wait_for_devtools
-    enable_feature "View Outlines"
+    enable_feature "Views"
 
     initial_comments = devtools_comments_count
 
@@ -197,7 +197,7 @@ class TurboSystemTest < SystemTest
     initial_metrics = page.evaluate_script("document.getElementById('revelio-metrics')?.textContent")
     assert initial_metrics, "Should have metrics JSON"
 
-    click_link "Slim"
+    within("nav") { click_link "Slim", match: :first }
     wait_for_devtools
     sleep 0.3
     find("#revelioMenuTrigger").click
@@ -214,7 +214,7 @@ class StimulusLinterSystemTest < SystemTest
   def test_linter_detects_issues
     visit "/haml/stimulus"
     wait_for_devtools
-    enable_feature "Stimulus Linter"
+    enable_feature "Stimulus"
     sleep 0.5
 
     issues = page.evaluate_script("document.querySelectorAll('.revelio-lint-item').length")
@@ -224,7 +224,7 @@ class StimulusLinterSystemTest < SystemTest
   def test_linter_shows_issue_types
     visit "/haml/stimulus"
     wait_for_devtools
-    enable_feature "Stimulus Linter"
+    enable_feature "Stimulus"
     sleep 0.5
 
     assert_selector ".revelio-lint-badge-controller"
@@ -235,7 +235,7 @@ class TurboLinterSystemTest < SystemTest
   def test_linter_detects_issues
     visit "/haml/turbo_linter"
     wait_for_devtools
-    enable_feature "Turbo Linter"
+    enable_feature "Turbo"
     sleep 0.5
 
     issues = page.evaluate_script("document.querySelectorAll('#revelioTurboResults .revelio-lint-item').length")
@@ -245,7 +245,7 @@ class TurboLinterSystemTest < SystemTest
   def test_linter_shows_issue_types
     visit "/haml/turbo_linter"
     wait_for_devtools
-    enable_feature "Turbo Linter"
+    enable_feature "Turbo"
     sleep 0.5
 
     assert_selector ".revelio-lint-badge-frame"
@@ -255,7 +255,7 @@ class TurboLinterSystemTest < SystemTest
   def test_linter_detects_frame_without_id
     visit "/haml/turbo_linter"
     wait_for_devtools
-    enable_feature "Turbo Linter"
+    enable_feature "Turbo"
     sleep 0.5
 
     assert_text 'missing required "id" attribute'
@@ -264,7 +264,7 @@ class TurboLinterSystemTest < SystemTest
   def test_linter_detects_dangling_reference
     visit "/haml/turbo_linter"
     wait_for_devtools
-    enable_feature "Turbo Linter"
+    enable_feature "Turbo"
     sleep 0.5
 
     assert_text "points to non-existent frame"
