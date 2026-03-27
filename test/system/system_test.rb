@@ -159,6 +159,31 @@ class TurboSystemTest < SystemTest
     assert count > 0, "Outlines should rebuild. boundaries=#{boundaries}, overlays=#{count}, comments=#{all_comments.inspect}"
   end
 
+  def test_panel_state_persists_across_turbo_drive
+    visit "/haml"
+    wait_for_devtools
+    find("#revelioMenuTrigger").click
+    assert_selector ".revelio-panel.open"
+
+    within("nav") { click_link "Slim", match: :first }
+    wait_for_devtools
+    sleep 0.5
+
+    assert_selector ".revelio-panel.open", wait: 3
+  end
+
+  def test_closed_panel_stays_closed_across_turbo_drive
+    visit "/haml"
+    wait_for_devtools
+    # Panel starts closed, don't open it
+
+    within("nav") { click_link "Slim", match: :first }
+    wait_for_devtools
+    sleep 0.5
+
+    assert_no_selector ".revelio-panel.open"
+  end
+
   def test_outlines_rebuild_after_turbo_frame_loads
     visit "/haml/turbo"
     wait_for_devtools
@@ -188,6 +213,19 @@ class TurboSystemTest < SystemTest
 
     new_comments = devtools_comments_count
     assert new_comments > initial_comments, "Turbo Stream should add devtools comment markers"
+  end
+
+  def test_turbo_stream_log_tracks_received_streams
+    visit "/haml/turbo"
+    wait_for_devtools
+
+    click_button "Add a post via Stream"
+    assert_selector "#stream-target .card", wait: 5
+    sleep 0.5
+
+    find("#revelioMenuTrigger").click
+    assert_selector "#revelioTurboStreamLog .revelio-stream-item", wait: 3
+    assert_selector ".revelio-lint-badge-append"
   end
 
   def test_metrics_update_after_turbo_drive_navigation

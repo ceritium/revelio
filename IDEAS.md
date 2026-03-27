@@ -58,12 +58,6 @@ Roadmap of features to implement. Each section describes the feature, how it wor
 - Form buttons without accessible text
 - Toggle in panel, red overlays on offending elements (same pattern as Stimulus linter)
 
-## Turbo
-
-### Turbo stream tracking
-- Log all turbo streams received: action, target, source template
-- Show in metrics panel: "3 streams received" with expandable detail
-
 ## ViewComponent
 
 ## Performance
