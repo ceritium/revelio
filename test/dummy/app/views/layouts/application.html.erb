@@ -2,9 +2,54 @@
 <html>
 <head>
   <title>Temple Devtools Dummy</title>
+  <script type="module">
+    import { Application, Controller } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js"
+    const app = Application.start()
+    window.Stimulus = app
+
+    // hello controller
+    app.register("hello", class extends Controller {
+      static targets = ["name", "output"]
+      greet() {
+        this.outputTarget.textContent = "Hello, " + this.nameTarget.value + "!"
+      }
+    })
+
+    // counter controller
+    app.register("counter", class extends Controller {
+      static targets = ["count"]
+      increment() {
+        this.countTarget.textContent = (parseInt(this.countTarget.textContent) || 0) + 1
+      }
+      decrement() {
+        this.countTarget.textContent = (parseInt(this.countTarget.textContent) || 0) - 1
+      }
+    })
+
+    // toggle controller
+    app.register("toggle", class extends Controller {
+      static targets = ["content"]
+      toggle() {
+        this.contentTarget.hidden = !this.contentTarget.hidden
+      }
+    })
+  </script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 0; }
+    nav { padding: 10px 16px; background: #f0f0f0; margin-bottom: 20px; font-size: 14px; }
+    nav a { margin: 0 4px; }
+    main { padding: 0 20px 40px; }
+    section { margin-bottom: 24px; }
+    h2 { font-size: 16px; color: #555; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
+    input[type=text] { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 6px 14px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+    button:hover { background: #f3f4f6; }
+    .error-example { background: #fef2f2; border: 1px dashed #fca5a5; padding: 12px; border-radius: 8px; margin: 8px 0; }
+  </style>
 </head>
 <body>
-<nav style="padding:10px;background:#f0f0f0;margin-bottom:20px">
+<nav>
   <strong>Engine:</strong>
   <a href="/haml">HAML</a> |
   <a href="/slim">Slim</a> |
@@ -15,8 +60,11 @@
   <a href="/haml/component">HAML component</a> ||
   <a href="/haml/mixed">HAML mixed</a> |
   <a href="/slim/mixed">Slim mixed</a> |
-  <a href="/erb/mixed">ERB mixed</a>
+  <a href="/erb/mixed">ERB mixed</a> ||
+  <a href="/haml/stimulus">Stimulus</a>
 </nav>
+<main>
 <%= yield %>
+</main>
 </body>
 </html>

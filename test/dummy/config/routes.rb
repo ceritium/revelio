@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get "/haml/partial" => "pages#haml_partial"
   get "/haml/component" => "pages#haml_component"
   get "/haml/mixed" => "pages#haml_mixed"
+  get "/haml/stimulus" => "pages#haml_stimulus"
 
   # Slim
   get "/slim" => "pages#slim_index"
