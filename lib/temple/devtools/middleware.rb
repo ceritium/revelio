@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require_relative "render_subscriber"
 
 module Temple
   module Devtools
@@ -12,79 +13,36 @@ module Temple
       def call(env)
         ensure_installed!
 
+        status = nil
+        headers = nil
+        response = nil
+
         metrics = collect_metrics do
-          @status, @headers, @response = @app.call(env)
+          status, headers, response = @app.call(env)
         end
 
-        return [@status, @headers, @response] unless injectable?(@status, @headers)
+        return [status, headers, response] unless injectable?(status, headers)
 
         body = +""
-        @response.each { |chunk| body << chunk }
-        @response.close if @response.respond_to?(:close)
+        response.each { |chunk| body << chunk }
+        response.close if response.respond_to?(:close)
 
         if body.include?("</body>")
           body.sub!("</body>", "#{devtools_injection(metrics)}\n</body>")
-          @headers["content-length"] = body.bytesize.to_s if @headers["content-length"]
+          headers["content-length"] = body.bytesize.to_s if headers["content-length"]
         end
 
-        [@status, @headers, [body]]
+        [status, headers, [body]]
       end
 
       private
-
-      # Subscriber that tracks render start/finish with a stack
-      # to attribute queries and GC to each render.
-      class RenderSubscriber
-        attr_reader :renders
-
-        def initialize(query_log)
-          @query_log = query_log
-          @stack = []
-          @renders = []
-        end
-
-        def start(_name, _id, payload)
-          @stack.push({
-            template: resolve_id(payload),
-            query_index: @query_log.size,
-            gc_start: GC.stat(:total_allocated_objects),
-            time_start: Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          })
-        end
-
-        def finish(_name, _id, _payload)
-          ctx = @stack.pop
-          return unless ctx
-
-          duration = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - ctx[:time_start]) * 1000).round(2)
-          queries_during = @query_log[ctx[:query_index]..]
-          gc_delta = GC.stat(:total_allocated_objects) - ctx[:gc_start]
-
-          @renders << {
-            template: ctx[:template],
-            duration: duration,
-            queries: queries_during.size,
-            query_time: queries_during.sum { |q| q[:duration] }.round(1),
-            gc_objects: gc_delta
-          }
-        end
-
-        private
-
-        def resolve_id(payload)
-          id = payload[:identifier] || payload[:name] || ""
-          root = Temple::Devtools.config.project_root
-          id = id.delete_prefix(root).delete_prefix("/") if root && id.start_with?(root.to_s)
-          id
-        end
-      end
 
       def collect_metrics
         all_queries = []
         subscribers = []
 
         if defined?(ActiveSupport::Notifications)
-          # SQL tracking — Rails 8.1 passes a single Event object
+          # SQL tracking -- Rails 8.1 passes a single Event object
           subscribers << ActiveSupport::Notifications.subscribe("sql.active_record") do |event|
             next if event.payload[:name] == "SCHEMA"
             all_queries << {
@@ -130,10 +88,9 @@ module Temple
       end
 
       def ensure_installed!
-        return if @extensions_installed
-
+        # Always call install! — it's idempotent per-engine and handles
+        # late-defined constants like Slim::RailsTemplate
         Temple::Devtools.install!
-        @extensions_installed = true
       end
 
       def injectable?(status, headers)

@@ -40,20 +40,6 @@ module Temple
 
         Haml::Engine.new(options).call(source)
       end
-
-      private
-
-      def resolve_template_info(template)
-        identifier = template.respond_to?(:identifier) ? template.identifier : "unknown"
-        relative = identifier.dup
-        root = Temple::Devtools.config.project_root
-        if root && relative.start_with?(root)
-          relative = relative.delete_prefix(root).delete_prefix("/")
-        end
-        type = template_type(relative)
-        short = File.basename(relative)
-        [relative, type, short]
-      end
     end
   end
 end

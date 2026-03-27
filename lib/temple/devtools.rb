@@ -4,10 +4,12 @@ require "temple"
 require_relative "devtools/version"
 require_relative "devtools/config"
 require_relative "devtools/template_type"
+require_relative "devtools/haml_tag_compiler_extension"
+require_relative "devtools/haml_template_extension"
+require_relative "devtools/slim_parser_extension"
+require_relative "devtools/slim_template_extension"
+require_relative "devtools/erb_template_extension"
 require_relative "devtools/middleware"
-
-# Engine-specific extensions (loaded lazily in install!)
-autoload_dir = File.expand_path("devtools", __dir__)
 
 module Temple
   module Devtools
@@ -28,51 +30,39 @@ module Temple
 
       def installed_engines
         engines = []
-        engines << :haml if @haml_installed
-        engines << :slim if @slim_installed
-        engines << :erb if @erb_installed
+        engines << :haml if defined?(Haml::Compiler::TagCompiler) && prepended?(Haml::Compiler::TagCompiler, HamlTagCompilerExtension)
+        engines << :slim if defined?(Slim::Parser) && prepended?(Slim::Parser, SlimParserExtension)
+        engines << :erb if defined?(ActionView::Template::Handlers::ERB) && prepended?(ActionView::Template::Handlers::ERB, ErbTemplateExtension)
         engines
       end
 
       private
 
+      def prepended?(klass, mod)
+        klass.ancestors.include?(mod)
+      end
+
       def install_haml!
-        if defined?(Haml::Compiler::TagCompiler) && !@haml_tag_installed
-          require_relative "devtools/haml_tag_compiler_extension"
+        if defined?(Haml::Compiler::TagCompiler) && !prepended?(Haml::Compiler::TagCompiler, HamlTagCompilerExtension)
           Haml::Compiler::TagCompiler.prepend(HamlTagCompilerExtension)
-          @haml_tag_installed = true
         end
-
-        if defined?(Haml::RailsTemplate) && !@haml_template_installed
-          require_relative "devtools/haml_template_extension"
+        if defined?(Haml::RailsTemplate) && !prepended?(Haml::RailsTemplate, HamlTemplateExtension)
           Haml::RailsTemplate.prepend(HamlTemplateExtension)
-          @haml_template_installed = true
         end
-
-        @haml_installed = @haml_tag_installed
       end
 
       def install_slim!
-        if defined?(Slim::Parser) && !@slim_parser_installed
-          require_relative "devtools/slim_parser_extension"
+        if defined?(Slim::Parser) && !prepended?(Slim::Parser, SlimParserExtension)
           Slim::Parser.prepend(SlimParserExtension)
-          @slim_parser_installed = true
         end
-
-        if defined?(Slim::RailsTemplate) && !@slim_template_installed
-          require_relative "devtools/slim_template_extension"
+        if defined?(Slim::RailsTemplate) && !prepended?(Slim::RailsTemplate, SlimTemplateExtension)
           Slim::RailsTemplate.prepend(SlimTemplateExtension)
-          @slim_template_installed = true
         end
-
-        @slim_installed = @slim_parser_installed
       end
 
       def install_erb!
-        if defined?(ActionView::Template::Handlers::ERB) && !@erb_installed
-          require_relative "devtools/erb_template_extension"
+        if defined?(ActionView::Template::Handlers::ERB) && !prepended?(ActionView::Template::Handlers::ERB, ErbTemplateExtension)
           ActionView::Template::Handlers::ERB.prepend(ErbTemplateExtension)
-          @erb_installed = true
         end
       end
     end

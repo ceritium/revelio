@@ -186,8 +186,65 @@ class MixedEngineIntegrationTest < ActionDispatch::IntegrationTest
   test "all three engines coexist with correct type detection" do
     get "/haml/mixed"
     body = response.body
-    # Should have view, partial markers from different engines
     assert_includes body, 'type="view"'
     assert_includes body, 'type="partial"'
+  end
+end
+
+class TurboIntegrationTest < ActionDispatch::IntegrationTest
+  setup do
+    Temple::Devtools.config.debug_mode = true
+    Temple::Devtools.install!
+  end
+
+  test "turbo page has devtools markers and data attributes" do
+    get "/haml/turbo"
+    assert_response :success
+    assert_includes response.body, "temple-devtools-begin"
+    assert_includes response.body, 'type="view"'
+    assert_includes response.body, 'data-devtools-type="view"'
+    assert_includes response.body, "turbo.html.haml"
+  end
+
+  test "turbo frame response has devtools markers" do
+    get "/haml/turbo_frame"
+    assert_response :success
+    body = response.body
+    assert_includes body, "temple-devtools-begin"
+    assert_includes body, 'type="view"'
+    assert_includes body, 'type="partial"'
+    assert_includes body, ".html.haml"
+  end
+
+  test "turbo frame response has data attributes on elements" do
+    get "/haml/turbo_frame"
+    body = response.body
+    assert_includes body, 'data-devtools-file='
+    assert_includes body, 'data-devtools-type="partial"'
+  end
+
+  test "turbo stream response has devtools markers" do
+    get "/haml/turbo_stream"
+    assert_response :success
+    body = response.body
+    # Turbo stream is text/vnd.turbo-stream.html, not text/html
+    # So the middleware does NOT inject the script (correct behavior)
+    refute_includes body, '<script id="temple-devtools">'
+    # But the template markers ARE in the compiled output
+    assert_includes body, "temple-devtools-begin"
+    assert_includes body, "turbo_stream.html.haml"
+  end
+
+  test "turbo stream has data attributes on elements" do
+    get "/haml/turbo_stream"
+    body = response.body
+    assert_includes body, 'data-devtools-file='
+    assert_includes body, 'data-devtools-type="view"'
+  end
+
+  test "turbo frame does not inject middleware script (no </body>)" do
+    get "/haml/turbo_frame"
+    # Frame responses without layout have no </body>, so no script injection
+    refute_includes response.body, '<script id="temple-devtools">'
   end
 end

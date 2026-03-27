@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   get "/haml/mixed" => "pages#haml_mixed"
   get "/haml/stimulus" => "pages#haml_stimulus"
   get "/haml/posts" => "pages#haml_posts"
+  get "/haml/turbo" => "pages#haml_turbo"
+  get "/haml/turbo_frame" => "pages#haml_turbo_frame"
+  get "/haml/turbo_stream" => "pages#haml_turbo_stream"
 
   # Slim
   get "/slim" => "pages#slim_index"
