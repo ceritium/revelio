@@ -28,6 +28,7 @@ require_relative "../dummy/config/application"
 
 DummyApp.config.middleware.use Revelio::Middleware
 DummyApp.config.view_component.preview_paths = []
+DummyApp.config.view_component.instrumentation_enabled = true
 DummyApp.initialize! unless DummyApp.initialized?
 
 # Create schema for Post
@@ -53,6 +54,7 @@ end
 Revelio.install!
 
 require_relative "../dummy/app/components/badge_component"
+require_relative "../dummy/app/components/empty_component"
 require_relative "../dummy/app/controllers/pages_controller"
 
 PagesController.view_paths = [File.join(DUMMY_ROOT, "app/views")]
@@ -268,6 +270,28 @@ class TurboLinterSystemTest < SystemTest
     sleep 0.5
 
     assert_text "points to non-existent frame"
+  end
+end
+
+class ComponentLinterSystemTest < SystemTest
+  def test_shows_component_inventory
+    visit "/haml/component"
+    wait_for_devtools
+    enable_feature "Component Inspector"
+    sleep 0.5
+
+    assert_selector ".revelio-component-item"
+    assert_text "badge_component"
+  end
+
+  def test_detects_empty_component
+    visit "/haml/component"
+    wait_for_devtools
+    enable_feature "Component Inspector"
+    sleep 0.5
+
+    assert_selector ".revelio-lint-badge-empty"
+    assert_text "no visible content"
   end
 end
 

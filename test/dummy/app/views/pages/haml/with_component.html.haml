@@ -1,3 +1,5 @@
 %div.page
   %h1 Page with component
   = render BadgeComponent.new(label: "Hello")
+  = render BadgeComponent.new(label: "World")
+  = render EmptyComponent.new(show: false)

@@ -39,6 +39,7 @@ end
 Revelio.install!
 
 require_relative "dummy/app/components/badge_component"
+require_relative "dummy/app/components/empty_component"
 require_relative "dummy/app/controllers/pages_controller"
 
 PagesController.view_paths = [File.join(DUMMY_ROOT, "app/views")]

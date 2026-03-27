@@ -60,24 +60,11 @@ Roadmap of features to implement. Each section describes the feature, how it wor
 
 ## Turbo
 
-### Turbo frame validation
-- Detect `<turbo-frame>` without `id`
-- Detect `data-turbo-frame` attributes pointing to non-existent frame IDs
-- Show in Stimulus Linter panel section (or a new "Turbo Linter" section)
-
 ### Turbo stream tracking
 - Log all turbo streams received: action, target, source template
 - Show in metrics panel: "3 streams received" with expandable detail
 
 ## ViewComponent
-
-### Component inventory
-- List all rendered components with their class name, render count, total duration
-- Expandable to show each render instance with props passed
-
-### Empty component detection
-- Detect components that rendered with no visible content (empty slots, nil content)
-- Useful for catching missing data or rendering bugs
 
 ## Performance
 

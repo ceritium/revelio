@@ -432,6 +432,31 @@
 .revelio-lint-badge-action { background: #eff6ff; color: #1e40af; }
 .revelio-lint-badge-frame { background: #f0fdf4; color: #166534; }
 .revelio-lint-badge-reference { background: #faf5ff; color: #6b21a8; }
+.revelio-lint-badge-empty { background: #fef3c7; color: #92400e; }
+.revelio-component-inventory {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+.revelio-component-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 6px;
+  font-size: 12px;
+  border-radius: 3px;
+}
+.revelio-component-item:hover { background: #f3f4f6; }
+.revelio-component-name {
+  color: #374151;
+  font-weight: 500;
+}
+.revelio-component-stats {
+  color: #9ca3af;
+  font-size: 11px;
+  white-space: nowrap;
+}
 .revelio-lint-msg { word-break: break-all; }
 .revelio-metrics-section {
   border-top: 1px solid #e5e7eb;
