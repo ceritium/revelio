@@ -28,6 +28,20 @@ jobs:
           cd browser-extension
           zip -r ../revelio-devtools-${{ steps.version.outputs.version }}.zip . -x "*.DS_Store"
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sign Firefox extension
+        run: |
+          npx web-ext sign \
+            --source-dir=browser-extension \
+            --api-key=${{ secrets.AMO_API_KEY }} \
+            --api-secret=${{ secrets.AMO_API_SECRET }} \
+            --channel=unlisted
+          mv web-ext-artifacts/*.xpi revelio-devtools-${{ steps.version.outputs.version }}.xpi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -36,6 +50,8 @@ jobs:
             ## Revelio Dev Tools Browser Extension
 
             **Installation:**
-            - **Firefox:** Download the `.zip`, go to `about:debugging#/runtime/this-firefox` → "Load Temporary Add-on" → select the zip
+            - **Firefox:** Download the `.xpi` file and open it in Firefox (or drag it onto the browser window)
             - **Chrome:** Download the `.zip`, extract it, go to `chrome://extensions` → enable Developer Mode → "Load unpacked" → select the extracted folder
-          files: revelio-devtools-${{ steps.version.outputs.version }}.zip
+          files: |
+            revelio-devtools-${{ steps.version.outputs.version }}.zip
+            revelio-devtools-${{ steps.version.outputs.version }}.xpi
