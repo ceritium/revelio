@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="tab active" data-tab="metrics">Metrics</button>
+        <button class="tab" data-tab="templates">Templates</button>
+        <button class="tab" data-tab="stimulus">Stimulus</button>
+        <button class="tab" data-tab="turbo">Turbo</button>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" title="Re-scan page">&#x21bb;</button>
+    </div>
+
+    <div class="controls-bar" id="controlsBar">
+      <label class="control-toggle" title="View Outlines">
+        <input type="checkbox" data-toggle="revelioToggleViewOutlines">
+        <span class="control-badge view">Views</span>
+      </label>
+      <label class="control-toggle" title="Partial Outlines">
+        <input type="checkbox" data-toggle="revelioTogglePartialOutlines">
+        <span class="control-badge partial">Partials</span>
+      </label>
+      <label class="control-toggle" title="Component Outlines">
+        <input type="checkbox" data-toggle="revelioToggleComponentOutlines">
+        <span class="control-badge component">Components</span>
+      </label>
+      <label class="control-toggle" title="Tooltips">
+        <input type="checkbox" data-toggle="revelioToggleTooltips">
+        <span class="control-badge erb">Tooltips</span>
+      </label>
+      <label class="control-toggle" title="Stimulus Linter">
+        <input type="checkbox" data-toggle="revelioToggleStimulusLinter">
+        <span class="control-badge stimulus">Stimulus</span>
+      </label>
+      <label class="control-toggle" title="Turbo Linter">
+        <input type="checkbox" data-toggle="revelioToggleTurboLinter">
+        <span class="control-badge turbo">Turbo</span>
+      </label>
+      <label class="control-toggle" title="Component Inspector">
+        <input type="checkbox" data-toggle="revelioToggleComponentLinter">
+        <span class="control-badge component">Inspector</span>
+      </label>
+    </div>
+
+    <div class="panel-content" id="metricsPanel" data-tab="metrics">
+      <div class="empty-state">No metrics data detected</div>
+    </div>
+
+    <div class="panel-content hidden" id="templatesPanel" data-tab="templates">
+      <div class="empty-state">No template boundaries detected</div>
+    </div>
+
+    <div class="panel-content hidden" id="stimulusPanel" data-tab="stimulus">
+      <div class="empty-state">Waiting for Stimulus data...</div>
+    </div>
+
+    <div class="panel-content hidden" id="turboPanel" data-tab="turbo">
+      <div class="section-title">Frame Issues</div>
+      <div id="turboIssues" class="empty-state">No issues found</div>
+      <div class="section-title">Stream Log</div>
+      <div id="turboStreams" class="empty-state">No streams captured</div>
+    </div>
+
+    <script src="panel.js"></script>
+  </body>
+</html>

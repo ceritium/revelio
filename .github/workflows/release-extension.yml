@@ -1,0 +1,41 @@
+name: Release Browser Extension
+
+on:
+  push:
+    tags:
+      - "ext-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#ext-v}" >> "$GITHUB_OUTPUT"
+
+      - name: Update manifest version
+        run: |
+          cd browser-extension
+          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v' manifest.json > tmp.json && mv tmp.json manifest.json
+
+      - name: Package extension
+        run: |
+          cd browser-extension
+          zip -r ../revelio-devtools-${{ steps.version.outputs.version }}.zip . -x "*.DS_Store"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Browser Extension v${{ steps.version.outputs.version }}"
+          body: |
+            ## Revelio Dev Tools Browser Extension
+
+            **Installation:**
+            - **Firefox:** Download the `.zip`, go to `about:debugging#/runtime/this-firefox` → "Load Temporary Add-on" → select the zip
+            - **Chrome:** Download the `.zip`, extract it, go to `chrome://extensions` → enable Developer Mode → "Load unpacked" → select the extracted folder
+          files: revelio-devtools-${{ steps.version.outputs.version }}.zip
