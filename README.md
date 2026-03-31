@@ -134,13 +134,28 @@ rake test             # integration tests (template markers, middleware)
 rake test_system      # browser tests (Capybara + Cuprite)
 ```
 
-### Releasing
+### Releasing the gem
 
 ```bash
 bin/release
 ```
 
 Runs tests, builds `overlay.js`, packages the gem, tags the version, pushes to GitHub, and publishes to RubyGems. Bump the version in `lib/revelio/version.rb` and commit before running.
+
+### Releasing the browser extension
+
+The browser extension is published as a `.zip` in GitHub Releases. To create a new release:
+
+```bash
+git tag ext-v0.1.0
+git push origin ext-v0.1.0
+```
+
+A GitHub Actions workflow packages `browser-extension/` and creates a release with the zip attached. The manifest version is updated automatically from the tag.
+
+To install the extension:
+- **Firefox**: download the `.zip`, go to `about:debugging#/runtime/this-firefox` → "Load Temporary Add-on" → select the zip
+- **Chrome**: download the `.zip`, extract it, go to `chrome://extensions` → enable Developer Mode → "Load unpacked" → select the extracted folder
 
 ### Screenshots
 
